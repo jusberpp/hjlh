@@ -7,11 +7,25 @@ import com.huijulh.study.common.ErrorCode;
 import com.huijulh.study.course.CourseService;
 import com.huijulh.study.security.SecurityContext;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -52,19 +66,76 @@ public class StudentExcelService {
     public byte[] template() {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("学员信息");
+            // 列宽：学校/课程/手机号需要更宽
+            int[] widths = {5200, 2800, 2200, 2600, 4000, 6200, 4200};
+            for (int index = 0; index < widths.length; index++) {
+                sheet.setColumnWidth(index, widths[index]);
+            }
+            // 表头样式：加粗 + 浅蓝底 + 居中 + 边框
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
             Row header = sheet.createRow(0);
-            for (int index = 0; index < HEADERS.size(); index++) header.createCell(index).setCellValue(HEADERS.get(index));
+            header.setHeightInPoints(22);
+            for (int index = 0; index < HEADERS.size(); index++) {
+                header.createCell(index).setCellValue(HEADERS.get(index));
+                header.getCell(index).setCellStyle(headerStyle);
+            }
+            // 示例行：浅灰斜体提示，上传前请删除
+            CellStyle exampleStyle = workbook.createCellStyle();
+            Font exampleFont = workbook.createFont();
+            exampleFont.setColor(IndexedColors.GREY_50_PERCENT.getIndex());
+            exampleFont.setItalic(true);
+            exampleStyle.setFont(exampleFont);
             Row example = sheet.createRow(1);
             List<String> values = List.of(
                     "北京市海淀实验中学", "高一", "3班", "张晨",
                     "2026010318", "高一数学培优、高一物理", "13812346021");
-            for (int index = 0; index < values.size(); index++) example.createCell(index).setCellValue(values.get(index));
-            for (int index = 0; index < HEADERS.size(); index++) sheet.autoSizeColumn(index);
+            for (int index = 0; index < values.size(); index++) {
+                example.createCell(index).setCellValue(values.get(index));
+                example.getCell(index).setCellStyle(exampleStyle);
+            }
+            // 字段填写说明批注
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
+            addComment(drawing, sheet, 0, 0, "学校", "请填写学校全称，必填");
+            addComment(drawing, sheet, 0, 1, "年级", "高一 / 高二 / 高三，必填");
+            addComment(drawing, sheet, 0, 2, "班级", "如 3班，必填");
+            addComment(drawing, sheet, 0, 3, "姓名", "学员真实姓名，必填");
+            addComment(drawing, sheet, 0, 4, "学号", "同一学校内唯一，必填");
+            addComment(drawing, sheet, 0, 5, "授权课程",
+                    "填写已启用课程名称，多门课程用顿号（、）分隔，必填；\n课程名需与管理端课程管理中的名称完全一致");
+            addComment(drawing, sheet, 0, 6, "授权手机号",
+                    "选填，11 位手机号，格式如 13812346021；\n一个手机号仅能绑定一个有效学员");
+            // 年级下拉验证（第 2 行起，示例行之后）
+            DataValidationHelper helper = sheet.getDataValidationHelper();
+            DataValidationConstraint gradeConstraint =
+                    helper.createExplicitListConstraint(new String[]{"高一", "高二", "高三"});
+            DataValidation gradeValidation =
+                    helper.createValidation(gradeConstraint, new CellRangeAddressList(1, 5000, 1, 1));
+            gradeValidation.setShowErrorBox(true);
+            gradeValidation.setErrorStyle(DataValidation.ErrorStyle.STOP);
+            gradeValidation.createErrorBox("年级不合法", "请选择：高一、高二 或 高三");
+            sheet.addValidationData(gradeValidation);
+            // 冻结首行
+            sheet.createFreezePane(0, 1);
             workbook.write(output);
             return output.toByteArray();
         } catch (Exception exception) {
             throw new IllegalStateException("Cannot create import template", exception);
         }
+    }
+
+    private void addComment(Drawing<?> drawing, Sheet sheet, int row, int col, String title, String text) {
+        Comment comment = drawing.createCellComment(
+                new XSSFClientAnchor(0, 0, 0, 0, (short) col, row, (short) col + 3, row + 4));
+        comment.setString(new XSSFRichTextString(text));
+        comment.setAuthor(title);
+        sheet.getRow(row).getCell(col).setCellComment(comment);
     }
 
     public Map<String, Object> validate(MultipartFile file) {
