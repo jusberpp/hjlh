@@ -1,0 +1,253 @@
+
+[
+  {
+    "index": 0,
+    "name": "学生认证统一 Controller",
+    "desc": "学生认证统一 Controller\n合并了：学校列表、学生校验、手机绑定、文件下载",
+    "add_time": 1780453473,
+    "up_time": 1780453473,
+    "list": [
+      {
+        "query_path": {
+          "path": "/auth/verify-student",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "_id": 177,
+        "res_body": "{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"integer\"},\"msg\":{\"type\":\"string\"},\"data\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"学生ID\"},\"school\":{\"type\":\"string\",\"description\":\"学校\"},\"grade\":{\"type\":\"string\",\"description\":\"年级\"},\"className\":{\"type\":\"string\",\"description\":\"班级\"},\"studentId\":{\"type\":\"string\",\"description\":\"学号\"},\"studentName\":{\"type\":\"string\",\"description\":\"学生姓名\"},\"learningLevels\":{\"type\":\"string\",\"description\":\"学习分层\"},\"goodsName\":{\"type\":\"string\",\"description\":\"课程名称\"},\"resourceId\":{\"type\":\"string\",\"description\":\"资源ID\"},\"goodsImg\":{\"type\":\"string\",\"description\":\"课程图片\"},\"courseUrl\":{\"type\":\"string\",\"description\":\"课程链接\"},\"phone\":{\"type\":\"string\",\"description\":\"手机号\"},\"token\":{\"type\":\"string\",\"description\":\"认证令牌（校验成功后生成，写入Redis）\"}}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"学生信息 + 课程信息 + token（200），或错误信息\"}",
+        "method": "POST",
+        "res_body_type": "json",
+        "title": "学生信息校验",
+        "path": "/auth/verify-student",
+        "catid": 102,
+        "req_headers": [
+          {
+            "required": "1",
+            "_id": "6a1ff418ebc2a330f8c0fd00",
+            "name": "Content-Type",
+            "value": "application/json",
+            "example": "application/json"
+          }
+        ],
+        "req_query": [],
+        "project_id": 39,
+        "req_params": [],
+        "uid": 28,
+        "add_time": 1780453474,
+        "up_time": 1780479000,
+        "req_body_form": [],
+        "__v": 0,
+        "req_body_other": "{\"type\":\"object\",\"properties\":{\"school\":{\"type\":\"string\",\"description\":\"学校\"},\"grade\":{\"type\":\"string\",\"description\":\"年级\"},\"name\":{\"type\":\"string\",\"description\":\"姓名\"},\"studentId\":{\"type\":\"string\",\"description\":\"学号\"}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"包含 school / grade / name / studentId\"}",
+        "req_body_type": "json",
+        "desc": "<p>\n根据学校、年级、姓名、学号匹配学生：\n<ul>\n  <li>学生已绑定手机号 → 直接返回学生信息 + token，不查询课程</li>\n  <li>学生未绑定手机号 → 查询该年级+分层对应的课程、调用小鹅通获取课程详情</li>\n</ul>\n验证通过后生成认证令牌写入 Redis（30分钟有效）。\n",
+        "markdown": "<p>\n根据学校、年级、姓名、学号匹配学生：\n<ul>\n  <li>学生已绑定手机号 → 直接返回学生信息 + token，不查询课程</li>\n  <li>学生未绑定手机号 → 查询该年级+分层对应的课程、调用小鹅通获取课程详情</li>\n</ul>\n验证通过后生成认证令牌写入 Redis（30分钟有效）。"
+      },
+      {
+        "query_path": {
+          "path": "/auth/bind-phone",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "_id": 180,
+        "res_body": "{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"integer\"},\"msg\":{\"type\":\"string\"},\"data\":{\"type\":\"boolean\"}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"绑定成功返回 true，失败返回错误信息\"}",
+        "method": "POST",
+        "res_body_type": "json",
+        "title": "手机号绑定",
+        "path": "/auth/bind-phone",
+        "catid": 102,
+        "req_headers": [
+          {
+            "required": "1",
+            "_id": "6a1ff418ebc2a330f8c0fd02",
+            "name": "Content-Type",
+            "value": "application/json",
+            "example": "application/json"
+          },
+          {
+            "required": "1",
+            "_id": "6a1ff418ebc2a330f8c0fd01",
+            "name": "token",
+            "value": "",
+            "desc": "认证令牌（请求头）"
+          }
+        ],
+        "req_query": [],
+        "project_id": 39,
+        "req_params": [],
+        "uid": 28,
+        "add_time": 1780453474,
+        "up_time": 1780479000,
+        "req_body_form": [],
+        "__v": 0,
+        "req_body_other": "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"学生ID\"},\"phone\":{\"type\":\"string\",\"description\":\"手机号\"}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"包含 id（学生ID）、phone（手机号）\"}",
+        "req_body_type": "json",
+        "desc": "<p>\n校验流程：\n<ol>\n  <li>参数校验（学生ID、手机号、令牌）</li>\n  <li>令牌校验（Redis 中 token 对应的学生ID与请求一致）</li>\n  <li>防重复绑定检查（学生已绑定 → 409）</li>\n  <li>手机号占用检查（被其他学生使用 → 409）</li>\n  <li>调用小鹅通开通课程 + 更新学生手机号</li>\n  <li>返回关联的课程资料文件列表</li>\n</ol>\n",
+        "markdown": "<p>\n校验流程：\n<ol>\n  <li>参数校验（学生ID、手机号、令牌）</li>\n  <li>令牌校验（Redis 中 token 对应的学生ID与请求一致）</li>\n  <li>防重复绑定检查（学生已绑定 → 409）</li>\n  <li>手机号占用检查（被其他学生使用 → 409）</li>\n  <li>调用小鹅通开通课程 + 更新学生手机号</li>\n  <li>返回关联的课程资料文件列表</li>\n</ol>"
+      },
+      {
+        "query_path": {
+          "path": "/auth/files/{fileId}/download",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "var",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "_id": 183,
+        "res_body": "{\"type\":\"object\",\"properties\":{},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"文件流或错误信息\"}",
+        "method": "GET",
+        "res_body_type": "json",
+        "title": "文件下载",
+        "path": "/auth/files/{fileId}/download",
+        "catid": 102,
+        "req_params": [
+          {
+            "_id": "6a1ff419ebc2a330f8c0fd05",
+            "name": "fileId",
+            "desc": "文件ID"
+          }
+        ],
+        "req_headers": [
+          {
+            "required": "1",
+            "_id": "6a1ff419ebc2a330f8c0fd04",
+            "name": "token",
+            "value": "",
+            "desc": "认证令牌（请求头）"
+          }
+        ],
+        "req_query": [],
+        "project_id": 39,
+        "uid": 28,
+        "add_time": 1780453474,
+        "up_time": 1780479001,
+        "req_body_form": [],
+        "__v": 0,
+        "desc": "<p>\n校验流程：\n<ol>\n  <li>令牌校验（Redis 中存在且未过期）</li>\n  <li>文件ID解析</li>\n  <li>从数据库查文件记录</li>\n  <li>路径穿越攻击检测（../ 等非法路径 → 403）</li>\n  <li>物理文件存在性检查</li>\n  <li>返回文件流（Content-Disposition: attachment）</li>\n</ol>\n",
+        "markdown": "<p>\n校验流程：\n<ol>\n  <li>令牌校验（Redis 中存在且未过期）</li>\n  <li>文件ID解析</li>\n  <li>从数据库查文件记录</li>\n  <li>路径穿越攻击检测（../ 等非法路径 → 403）</li>\n  <li>物理文件存在性检查</li>\n  <li>返回文件流（Content-Disposition: attachment）</li>\n</ol>"
+      },
+      {
+        "query_path": {
+          "path": "/auth/bind-result",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "_id": 197,
+        "res_body": "{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"integer\"},\"msg\":{\"type\":\"string\"},\"data\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"学生ID\"},\"school\":{\"type\":\"string\",\"description\":\"学校\"},\"grade\":{\"type\":\"string\",\"description\":\"年级\"},\"className\":{\"type\":\"string\",\"description\":\"班级\"},\"studentId\":{\"type\":\"string\",\"description\":\"学号\"},\"studentName\":{\"type\":\"string\",\"description\":\"学生姓名\"},\"learningLevels\":{\"type\":\"string\",\"description\":\"学习分层\"},\"phone\":{\"type\":\"string\",\"description\":\"手机号（中间4位隐藏）\"},\"goodsName\":{\"type\":\"string\",\"description\":\"课程名称\"},\"resourceId\":{\"type\":\"string\",\"description\":\"资源ID\"},\"goodsImg\":{\"type\":\"string\",\"description\":\"课程图片\"},\"courseUrl\":{\"type\":\"string\",\"description\":\"课程链接\"},\"files\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"description\":\"文件ID\"},\"fileName\":{\"type\":\"string\",\"description\":\"文件名称\"},\"fileSize\":{\"type\":\"integer\",\"description\":\"文件大小（字节）\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间\"}}},\"description\":\"关联的课程资料文件列表\"}}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"学生信息 + 课程信息 + 文件列表\"}",
+        "method": "GET",
+        "res_body_type": "json",
+        "title": "查询开通结果",
+        "path": "/auth/bind-result",
+        "catid": 102,
+        "markdown": "<p>\n通过认证令牌从 Redis 获取学生ID和手机号，返回学生信息、课程信息、课程资料文件列表。\n需先调用{@code /auth/bind-phone} 绑定手机号后方可查询到资料。",
+        "req_headers": [
+          {
+            "required": "1",
+            "_id": "6a1ff418ebc2a330f8c0fd03",
+            "name": "token",
+            "value": "",
+            "desc": "认证令牌（请求头）"
+          }
+        ],
+        "req_query": [],
+        "desc": "<p>\n通过认证令牌从 Redis 获取学生ID和手机号，返回学生信息、课程信息、课程资料文件列表。\n需先调用{@code /auth/bind-phone} 绑定手机号后方可查询到资料。\n",
+        "project_id": 39,
+        "req_params": [],
+        "uid": 28,
+        "add_time": 1780477769,
+        "up_time": 1780479000,
+        "req_body_form": [],
+        "__v": 0
+      },
+      {
+        "query_path": {
+          "path": "/auth/schools",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "_id": 174,
+        "res_body": "{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"integer\"},\"msg\":{\"type\":\"string\"},\"data\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"学校名称列表\"}",
+        "method": "GET",
+        "res_body_type": "json",
+        "title": "获取学校列表",
+        "path": "/auth/schools",
+        "catid": 102,
+        "req_headers": [],
+        "req_query": [],
+        "project_id": 39,
+        "req_params": [],
+        "uid": 28,
+        "add_time": 1780453474,
+        "up_time": 1780479000,
+        "req_body_form": [],
+        "__v": 0,
+        "desc": "<p>\n从数据库去重查询所有学校，按名称排序返回。结果缓存在 Guava Cache 中（1小时过期）。\n",
+        "markdown": "<p>\n从数据库去重查询所有学校，按名称排序返回。结果缓存在 Guava Cache 中（1小时过期）。"
+      },
+      {
+        "query_path": {
+          "path": "/auth/grades",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "_id": 190,
+        "res_body": "{\"type\":\"object\",\"properties\":{\"code\":{\"type\":\"integer\"},\"msg\":{\"type\":\"string\"},\"data\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"description\":\"年级列表：[\\\"高一\\\", \\\"高二\\\", \\\"高三\\\"]\"}",
+        "method": "GET",
+        "res_body_type": "json",
+        "title": "获取年级列表（固定值）",
+        "path": "/auth/grades",
+        "catid": 102,
+        "req_headers": [],
+        "req_query": [],
+        "project_id": 39,
+        "req_params": [],
+        "uid": 28,
+        "add_time": 1780465537,
+        "up_time": 1780479000,
+        "req_body_form": [],
+        "__v": 0,
+        "desc": "<p></p>",
+        "markdown": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E学慧通后台端 - 第一期原型</title>
+  <style>
+    :root {
+      --nav: #1e293b;
+      --nav-soft: #334155;
+      --blue: #1677ff;
+      --blue-soft: #e8f1ff;
+      --orange: #f97316;
+      --orange-soft: #fff3e8;
+      --green: #16a34a;
+      --green-soft: #eaf8ef;
+      --red: #dc2626;
+      --red-soft: #feecec;
+      --cyan: #0891b2;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    a {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(22, 119, 255, 0.28);
+      outline-offset: 2px;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+      transform: none !important;
+    }
+
+    .admin-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 252px 1fr;
+    }
+
+    .sidebar {
+      background: var(--nav);
+      color: #e2e8f0;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    .brand {
+      padding: 6px 10px 16px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.12);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      color: #fff;
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      min-height: 42px;
+      border: 0;
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 0 10px;
+      color: #cbd5e1;
+      background: transparent;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 700;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-btn.active {
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .nav-btn svg,
+    .icon-btn svg,
+    .toolbar-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sidebar-note {
+      margin-top: auto;
+      padding: 12px;
+      border-radius: 8px;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .page-title h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .page-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .env-tag,
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .toolbar-link {
+      min-height: 40px;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      background: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .toolbar-link:hover {
+      transform: translateY(-1px);
+      background: var(--blue-soft);
+    }
+
+    .env-tag {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .status.ok {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .status.warn {
+      color: var(--orange);
+      background: var(--orange-soft);
+    }
+
+    .status.fail {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .status.sync {
+      color: var(--cyan);
+      background: #e6f8fb;
+    }
+
+    .content {
+      padding: 22px 24px 30px;
+      overflow: auto;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+      animation: fadeIn 160ms ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      min-height: 108px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      display: grid;
+      align-content: space-between;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .metric b {
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .metric small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .layout-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+      gap: 16px;
+    }
+
+    .panel-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .panel-head {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .panel-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .toolbar input,
+    .toolbar select,
+    .field {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 11px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .toolbar input {
+      min-width: 240px;
+    }
+
+    .primary,
+    .secondary,
+    .danger,
+    .toolbar-btn,
+    .icon-btn {
+      min-height: 40px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 800;
+      transition: transform 160ms ease, background 160ms ease, opacity 160ms ease;
+    }
+
+    .primary {
+      color: #fff;
+      background: var(--blue);
+    }
+
+    .secondary,
+    .toolbar-btn,
+    .icon-btn {
+      color: var(--blue);
+      border-color: #bfdbfe;
+      background: #fff;
+    }
+
+    .danger {
+      color: var(--red);
+      border-color: #fecaca;
+      background: #fff;
+    }
+
+    .primary:hover,
+    .secondary:hover,
+    .danger:hover,
+    .toolbar-btn:hover,
+    .icon-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .table-wrap {
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    th {
+      color: #475569;
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    td {
+      color: var(--text);
+    }
+
+    tr:hover td {
+      background: #fbfdff;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 7px;
+    }
+
+    .form-row label {
+      color: #475569;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .field {
+      width: 100%;
+    }
+
+    .upload-box {
+      border: 1px dashed #93c5fd;
+      border-radius: 8px;
+      padding: 20px;
+      display: grid;
+      gap: 10px;
+      place-items: center;
+      text-align: center;
+      background: #f8fbff;
+    }
+
+    .upload-box svg {
+      width: 34px;
+      height: 34px;
+      color: var(--blue);
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    .upload-box b {
+      font-size: 15px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .step b {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 12px;
+    }
+
+    .api-flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .flow-row {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .flow-row small {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 40;
+      min-width: 220px;
+      max-width: 360px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: #fff;
+      background: rgba(15, 23, 42, 0.94);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .confirm-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.38);
+    }
+
+    .confirm-backdrop.active {
+      display: flex;
+    }
+
+    .confirm-backdrop[aria-hidden="true"] {
+      display: none;
+    }
+
+    .confirm-card {
+      width: min(420px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: #fff;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+    }
+
+    .confirm-card h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .confirm-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .confirm-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .module-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .platform-tabs,
+    .type-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .platform-tab,
+    .type-tab {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      color: var(--muted);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .platform-tab.active,
+    .type-tab.active {
+      color: var(--blue);
+      border-color: #bfdbfe;
+      background: var(--blue-soft);
+    }
+
+    .platform-tab[disabled],
+    .type-tab[disabled] {
+      color: #94a3b8;
+      background: #f8fafc;
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .resource-card {
+      min-height: 150px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      background: #fff;
+    }
+
+    .resource-card h4 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .resource-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .resource-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+
+    .display-zone-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .zone-card {
+      min-height: 92px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+      align-content: start;
+      color: var(--text);
+      background: #fff;
+      text-align: left;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    .zone-card.active {
+      border-color: #bfdbfe;
+      background: var(--blue-soft);
+    }
+
+    .zone-card b {
+      font-size: 14px;
+    }
+
+    .zone-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .content-home[hidden],
+    .content-detail[hidden] {
+      display: none;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .module-card {
+      min-height: 168px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      color: var(--text);
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .module-card:hover,
+    .module-card:focus-visible {
+      border-color: #bfdbfe;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.10);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .module-card b {
+      font-size: 15px;
+    }
+
+    .module-card span,
+    .module-card small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .module-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .module-meta em {
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .detail-toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.4fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .detail-toolbar input,
+    .detail-toolbar select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 11px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .path-note {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--muted);
+      background: #f8fbff;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .creation-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .flow-step-card {
+      min-height: 178px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      background: #fff;
+    }
+
+    .flow-step-card h4 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+    }
+
+    .step-index {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      color: #fff;
+      background: var(--blue);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .flow-step-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .publish-strip {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #f8fbff;
+    }
+
+    .publish-strip p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-kv {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-kv div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .mini-kv b {
+      color: var(--text);
+    }
+
+    .submodule-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .submodule {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      background: #fff;
+    }
+
+    .submodule b {
+      font-size: 14px;
+    }
+
+    .submodule span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .query-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .query-grid input,
+    .query-grid select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 11px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    @media (max-width: 1050px) {
+      .admin-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .nav-group {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric-grid,
+      .layout-2,
+      .form-grid,
+      .resource-grid,
+      .display-zone-grid,
+      .module-grid,
+      .creation-flow,
+      .submodule-list,
+      .detail-toolbar,
+      .query-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .panel-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions,
+      .toolbar {
+        width: 100%;
+      }
+
+      .top-actions button {
+        flex: 1 1 140px;
+      }
+
+      .toolbar input {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .content {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="admin-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>E学慧通后台</h1>
+        <p>账号、内容、数据与同步监控。</p>
+      </div>
+
+      <nav class="nav-group" aria-label="后台导航">
+        <button class="nav-btn active" data-view="account">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m7 8 5-5 5 5"></path><path d="M5 19h14"></path></svg>
+          账号管理
+        </button>
+        <button class="nav-btn" data-view="content">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v12H4z"></path><path d="M8 21h8"></path><path d="M12 17v4"></path></svg>
+          内容配置
+        </button>
+        <button class="nav-btn" data-view="data-center">
+          <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v6c0 2 4 3 8 3s8-1 8-3V5"></path><path d="M4 11v6c0 2 4 3 8 3s8-1 8-3v-6"></path></svg>
+          数据中心
+        </button>
+        <button class="nav-btn" data-view="logs">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h10"></path></svg>
+          同步日志
+        </button>
+      </nav>
+
+      <div class="sidebar-note">
+        内容先配置到我们平台，再按小程序、网页、APP 等用户端发布。
+      </div>
+    </aside>
+
+    <section class="main">
+      <header class="topbar">
+        <div class="page-title">
+          <h2 id="viewTitle">账号管理</h2>
+          <p id="viewDesc">整合账号导入、用户检索和学生绑定处理。</p>
+        </div>
+        <div class="top-actions">
+          <span class="env-tag">生产环境</span>
+          <span class="status ok">接口网关正常</span>
+          <a class="toolbar-link" href="prototype.html">学生端</a>
+          <button class="toolbar-btn" data-action="refresh">
+            <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
+            刷新
+          </button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view active" id="view-account">
+          <div class="metric-grid">
+            <div class="metric"><span>账号总量</span><b>12,486</b><small>今日新增 328</small></div>
+            <div class="metric"><span>学生绑定率</span><b>82.4%</b><small>待处理冲突 36 条</small></div>
+            <div class="metric"><span>未绑定用户</span><b>1,948</b><small>小程序授权待匹配</small></div>
+            <div class="metric"><span>导入错误</span><b style="color:var(--red);">2</b><small>需修正后重传</small></div>
+          </div>
+
+          <div class="layout-2">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>账号导入与校验</h3>
+                  <p>导入用户、学生和绑定关系；校验通过后再写入账号库。</p>
+                </div>
+                <button class="secondary" data-action="downloadTemplate">下载模板</button>
+              </div>
+              <div class="panel-body">
+                <div class="upload-box">
+                  <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m7 8 5-5 5 5"></path><path d="M5 19h14"></path></svg>
+                  <b>上传账号导入文件</b>
+                  <span class="muted">支持 CSV / XLSX，包含手机号、姓名、学校、年级、班级、学习账号和微信标识。</span>
+                  <button class="primary" data-action="validateImport">模拟导入并校验</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>绑定处理</h3>
+                  <p>处理小程序授权用户与学生档案之间的关系。</p>
+                </div>
+                <button class="primary" data-action="bindStudent">手动绑定</button>
+              </div>
+              <div class="panel-body steps">
+                <div class="step"><b>1</b><span>按手机号、学生姓名或学习账号查询用户。</span></div>
+                <div class="step"><b>2</b><span>处理一个手机号多个学生、一个学生多个手机号等冲突。</span></div>
+                <div class="step"><b>3</b><span>确认后学生端返回已绑定状态并展示学习数据。</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>账号与绑定列表</h3>
+                <p id="importSummary">可先校验导入文件，也可直接检索已有账号。</p>
+              </div>
+              <div class="top-actions">
+                <button class="secondary" data-action="searchBinding">查询</button>
+                <button class="primary" data-action="confirmImport" disabled>确认入库</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="toolbar">
+                <input id="bindingSearch" value="176****0909" placeholder="手机号 / 学生姓名 / 学习账号">
+                <select><option>全部状态</option><option>已绑定</option><option>冲突</option><option>待绑定</option></select>
+                <select><option>全部来源</option><option>后台导入</option><option>小程序授权</option></select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>手机号</th><th>用户/学生</th><th>微信昵称</th><th>学校/班级</th><th>学习账号</th><th>绑定状态</th><th>处理建议</th><th>操作</th></tr>
+                </thead>
+                <tbody id="importRows">
+                  <tr><td>176****0909</td><td>微信用户CHS123 / 慧小聚</td><td>小聚妈妈</td><td>慧聚领航学校 / 高三10班</td><td>12345678</td><td><span class="status ok">已绑定</span></td><td>无需处理</td><td><button class="icon-btn" data-action="viewDetail">详情</button></td></tr>
+                  <tr><td>138****1622</td><td>王同学 / 王小同</td><td>王同学家长</td><td>高二8班</td><td>冲突</td><td><span class="status warn">待确认</span></td><td>确认学生归属</td><td><button class="icon-btn" data-action="resolveConflict">处理</button></td></tr>
+                  <tr><td>159****7731</td><td>未匹配</td><td>学习中</td><td>-</td><td>-</td><td><span class="status fail">待绑定</span></td><td>补全学生档案</td><td><button class="icon-btn" data-action="bindStudent">绑定</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-content">
+          <div class="module-stack content-home" id="contentHome">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>用户端与模块</h3>
+                  <p>一级页面只负责选择用户端和模块；进入模块后再管理下属资源内容。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="platform-tabs" aria-label="用户端">
+                  <button class="platform-tab active">小程序</button>
+                  <button class="platform-tab" disabled>网页（计划）</button>
+                  <button class="platform-tab" disabled>APP（计划）</button>
+                </div>
+                <div class="path-note">当前仅实现小程序端。模块入口来自学生端课程相关页面：首页公益课程、学习中心、直播课程和公益课推荐弹窗。</div>
+                <div class="module-grid" aria-label="小程序内容模块">
+                  <button class="module-card" data-action="openContentModule" data-module="homePublic">
+                    <b>首页公益课程</b>
+                    <span>对应学生端首页“公益课程”列表，可配置预约、观看或课程推荐入口。</span>
+                    <div class="module-meta"><em>5 个资源</em><em>3 个已上架</em></div>
+                    <small>点击查看资源列表</small>
+                  </button>
+                  <button class="module-card" data-action="openContentModule" data-module="learningCenter">
+                    <b>学习中心</b>
+                    <span>对应“精品课程 / 我的课程 / 全部课程”，承载课程和资料的长期学习入口。</span>
+                    <div class="module-meta"><em>18 个资源</em><em>12 个已上架</em></div>
+                    <small>点击查看资源列表</small>
+                  </button>
+                  <button class="module-card" data-action="openContentModule" data-module="liveCourse">
+                    <b>直播课程</b>
+                    <span>对应学习页“直播课程”，展示直播中、未开始和可回看的课程内容。</span>
+                    <div class="module-meta"><em>7 个资源</em><em>4 个已上架</em></div>
+                    <small>点击查看资源列表</small>
+                  </button>
+                  <button class="module-card" data-action="openContentModule" data-module="promoModal">
+                    <b>公益课推荐弹窗</b>
+                    <span>对应学生端运营弹窗，用于重点公益课程、活动课和公开课推荐。</span>
+                    <div class="module-meta"><em>2 个资源</em><em>1 个已上架</em></div>
+                    <small>点击查看资源列表</small>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>一级页面规则</h3>
+                  <p>先选端，再选模块。新增、配置、上架和下架都在模块下的二级资源列表完成。</p>
+                </div>
+              </div>
+              <div class="panel-body submodule-list">
+                <div class="submodule"><b>按用户端组织</b><span>小程序已开放；网页和 APP 保留计划状态，后续可接入同一套资源模型。</span><span class="status ok">小程序可用</span></div>
+                <div class="submodule"><b>按展示模块进入</b><span>模块卡片只作为入口，不在一级页面平铺创建动作，避免后台路径混乱。</span><span class="status sync">层级清晰</span></div>
+                <div class="submodule"><b>二级列表操作</b><span>进入模块后再进行资源新增、编辑、删除、课程配置、文件上传和上下架。</span><span class="status warn">下级处理</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-stack content-detail" id="contentDetail" hidden>
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 id="contentModuleTitle">首页公益课程资源</h3>
+                  <p id="contentModuleDesc">管理该展示区下的内容资源，新增、配置和上下架都在此列表完成。</p>
+                </div>
+                <div class="top-actions">
+                  <button class="secondary" data-action="backToContentHome">返回模块</button>
+                  <button class="secondary" data-action="syncThirdCourse">同步第三方课程</button>
+                  <button class="primary" data-action="createModuleResource">新增内容</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="detail-toolbar">
+                  <input value="学习能力跃迁" placeholder="内容标题 / 课程名称">
+                  <select><option>全部资源类型</option><option>自有视频课程</option><option>小鹅通课程</option><option>文件资料</option></select>
+                  <select><option>全部状态</option><option>已上架</option><option>草稿</option><option>已下架</option></select>
+                  <button class="secondary" data-action="queryContentResource">查询</button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>内容标题</th><th>课程资源</th><th>文件</th><th>按钮</th><th>状态</th><th>最近更新</th><th>操作</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>十一黄金周学习能力跃迁课</td>
+                      <td>小鹅通课程 / 封面、名称、详情已获取</td>
+                      <td>学习资料包 A</td>
+                      <td>立即预约</td>
+                      <td><span class="status ok">已上架</span></td>
+                      <td>今天 10:28</td>
+                      <td><div class="resource-actions"><button class="icon-btn" data-action="editContent">编辑</button><button class="icon-btn" data-action="unpublishContent">下架</button></div></td>
+                    </tr>
+                    <tr>
+                      <td>高三冲刺规划公开课</td>
+                      <td>自有视频课程</td>
+                      <td>-</td>
+                      <td>前往学习</td>
+                      <td><span class="status sync">待发布</span></td>
+                      <td>昨天 18:42</td>
+                      <td><div class="resource-actions"><button class="icon-btn" data-action="editContent">编辑</button><button class="icon-btn" data-action="publishContent">发布</button></div></td>
+                    </tr>
+                    <tr>
+                      <td>高三英语高频考点讲义</td>
+                      <td>-</td>
+                      <td>PDF 文件</td>
+                      <td>资料下载</td>
+                      <td><span class="status warn">草稿</span></td>
+                      <td>06-08 15:16</td>
+                      <td><div class="resource-actions"><button class="icon-btn" data-action="editContent">编辑</button><button class="icon-btn" data-action="deleteContent">删除</button></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>二级操作路径</h3>
+                  <p>课程和文件可以关联，也可以独立存在；所有配置动作都发生在当前模块下。</p>
+                </div>
+              </div>
+              <div class="panel-body creation-flow">
+                <article class="flow-step-card">
+                  <h4><span class="step-index">1</span>新增展示内容</h4>
+                  <p>填写标题、按钮文案、排序、展示规则和基础状态。</p>
+                  <div class="resource-actions">
+                    <button class="primary" data-action="createModuleResource">新增内容</button>
+                  </div>
+                </article>
+                <article class="flow-step-card">
+                  <h4><span class="step-index">2</span>配置课程资源</h4>
+                  <p>上传自有视频课程，或关联小鹅通并通过接口获取封面、名称、详情和课节。</p>
+                  <div class="resource-actions">
+                    <button class="primary" data-action="uploadCourseResource">上传课程</button>
+                    <button class="secondary" data-action="fetchXetCourse">关联小鹅通</button>
+                  </div>
+                </article>
+                <article class="flow-step-card">
+                  <h4><span class="step-index">3</span>上传文件</h4>
+                  <p>非必传。支持 PDF、WORD、PPT 等资料，可与课程关联，也可作为独立文件资源。</p>
+                  <div class="resource-actions">
+                    <button class="secondary" data-action="uploadOptionalFile">上传文件</button>
+                    <button class="secondary" data-action="skipFileResource">暂不上传</button>
+                  </div>
+                </article>
+                <article class="flow-step-card">
+                  <h4><span class="step-index">4</span>上下架</h4>
+                  <p>审核后发布上架；需要撤回时可下架，保留历史数据和配置记录。</p>
+                  <div class="resource-actions">
+                    <button class="primary" data-action="publishContent">发布上架</button>
+                    <button class="danger" data-action="unpublishContent">下架</button>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-data-center">
+          <div class="metric-grid">
+            <div class="metric"><span>总用户</span><b>12,486</b><small>小程序 12,102</small></div>
+            <div class="metric"><span>今日学习人数</span><b>3,892</b><small>较昨日 +12%</small></div>
+            <div class="metric"><span>总观看时长</span><b>26,410h</b><small>课程学习数据</small></div>
+            <div class="metric"><span>学情档案</span><b>14,982</b><small>可单用户导出</small></div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>数据看板</h3>
+                <p>从用户、课程学习、作业和学情档案看整体表现。</p>
+              </div>
+              <button class="secondary" data-action="exportDashboard">导出看板</button>
+            </div>
+            <div class="panel-body submodule-list">
+              <div class="submodule"><b>用户增长</b><span>今日新增 328，绑定率 82.4%，未绑定用户 1,948。</span><span class="status ok">正常</span></div>
+              <div class="submodule"><b>学习行为</b><span>在学课程 214 门，最近 7 天观看 8,406 小时。</span><span class="status sync">跟踪中</span></div>
+              <div class="submodule"><b>学情产出</b><span>学情档案 14,982 份，批改报告延迟 3 条。</span><span class="status warn">需关注</span></div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>用户数据查询与导出</h3>
+                <p>支持姓名、手机号、微信号、昵称、地区、学校、年级、课程、观看时长和最近学习时间。</p>
+              </div>
+              <div class="top-actions">
+                <button class="secondary" data-action="queryUserData">查询</button>
+                <button class="primary" data-action="exportUserData">导出用户数据</button>
+                <button class="secondary" data-action="exportLearningProfile">导出学情档案</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="query-grid">
+                <input value="慧小聚" placeholder="姓名 / 用户名">
+                <input value="176****0909" placeholder="手机号">
+                <input placeholder="微信号">
+                <input value="小聚妈妈" placeholder="微信昵称">
+                <select><option>全部地区</option><option>北京</option><option>上海</option><option>广东</option></select>
+                <input value="慧聚领航学校" placeholder="学校">
+                <select><option>全部年级</option><option>高一</option><option>高二</option><option>高三</option></select>
+                <input value="学习能力跃迁课" placeholder="学习课程">
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>姓名</th><th>手机号</th><th>微信号</th><th>微信昵称</th><th>地区</th><th>学校/年级</th><th>学习课程</th><th>观看时长</th><th>最近学习</th><th>学情档案</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>慧小聚</td><td>176****0909</td><td>wx_huiju_0909</td><td>小聚妈妈</td><td>北京</td><td>慧聚领航学校 / 高三</td><td>学习能力跃迁课</td><td>12.6h</td><td>今天 19:20</td><td><button class="icon-btn" data-action="viewLearningProfile">查看/导出</button></td></tr>
+                  <tr><td>王同学</td><td>138****1622</td><td>wx_wang_1622</td><td>王同学家长</td><td>上海</td><td>高二8班</td><td>函数专题巩固课</td><td>8.4h</td><td>昨天 21:03</td><td><button class="icon-btn" data-action="viewLearningProfile">查看/导出</button></td></tr>
+                  <tr><td>李同学</td><td>159****7731</td><td>-</td><td>学习中</td><td>广东</td><td>高一3班</td><td>-</td><td>0h</td><td>-</td><td><button class="icon-btn" data-action="viewLearningProfile">待生成</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>数据落库子模块</h3>
+                <p>原数据落库状态下沉为数据中心的核查子模块。</p>
+              </div>
+              <button class="secondary" data-action="exportData">导出核对</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>数据域</th><th>今日新增</th><th>总量</th><th>来源</th><th>落库状态</th><th>最近更新时间</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>账号与学生</td><td>328</td><td>12,486</td><td>后台导入 / 小程序授权</td><td><span class="status ok">正常</span></td><td>10:32</td></tr>
+                  <tr><td>内容资源</td><td>26</td><td>1,284</td><td>自有上传 / 小鹅通接口</td><td><span class="status ok">正常</span></td><td>10:28</td></tr>
+                  <tr><td>课程观看</td><td>1,026</td><td>26,410</td><td>小程序学习中心</td><td><span class="status sync">同步中</span></td><td>10:25</td></tr>
+                  <tr><td>学情档案</td><td>1,070</td><td>14,982</td><td>我们平台生成</td><td><span class="status ok">正常</span></td><td>10:18</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-overview" hidden>
+          <div class="metric-grid">
+            <div class="metric"><span>已导入账号</span><b>12,486</b><small>今日新增 328</small></div>
+            <div class="metric"><span>学生绑定率</span><b>82.4%</b><small>待处理冲突 36 条</small></div>
+            <div class="metric"><span>今日作业提交</span><b>1,268</b><small>批改中 184</small></div>
+            <div class="metric"><span>同步失败</span><b style="color:var(--red);">17</b><small>需技术支持处理</small></div>
+          </div>
+
+          <div class="layout-2">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>关键链路</h3>
+                  <p>从后台配置到学生端展示，再到第三方能力回流。</p>
+                </div>
+              </div>
+              <div class="panel-body api-flow">
+                <div class="flow-row"><span>账号导入和学生绑定</span><small>后台完成，学生端只读取绑定结果</small><span class="status ok">正常</span></div>
+                <div class="flow-row"><span>课程配置</span><small>后台映射第三方课程，小程序读取我们平台课程</small><span class="status ok">正常</span></div>
+                <div class="flow-row"><span>作业提交</span><small>学生端提交到我们平台，再转发第三方作业能力</small><span class="status sync">同步中</span></div>
+                <div class="flow-row"><span>批改报告</span><small>第三方回调结果落库后生成学情档案</small><span class="status warn">3 条延迟</span></div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>待处理事项</h3>
+                  <p>按影响学生端体验排序。</p>
+                </div>
+              </div>
+              <div class="panel-body steps">
+                <div class="step"><b>1</b><span>处理 36 条学生绑定冲突，避免家长进入未绑定态。</span></div>
+                <div class="step"><b>2</b><span>重试 17 条同步失败日志，优先处理批改回调失败。</span></div>
+                <div class="step"><b>3</b><span>确认“名校试卷讲评体验课”的第三方课程 ID。</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-import" hidden>
+          <div class="layout-2">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>账号批量导入</h3>
+                  <p>账号和学生绑定关系由我们平台统一维护。</p>
+                </div>
+                <button class="secondary" data-action="downloadTemplate">下载模板</button>
+              </div>
+              <div class="panel-body">
+                <div class="upload-box">
+                  <svg viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="m7 8 5-5 5 5"></path><path d="M5 19h14"></path></svg>
+                  <b>上传账号导入文件</b>
+                  <span class="muted">支持 CSV / XLSX，包含手机号、学生姓名、学校、年级、班级、学习账号。</span>
+                  <button class="primary" data-action="validateImport">模拟导入并校验</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>导入步骤</h3>
+                  <p>必须先校验预览，再确认入库。</p>
+                </div>
+              </div>
+              <div class="panel-body steps">
+                <div class="step"><b>1</b><span>上传运营整理好的账号文件。</span></div>
+                <div class="step"><b>2</b><span>系统校验手机号、学习账号和重复记录。</span></div>
+                <div class="step"><b>3</b><span>处理冲突后确认导入，写入我们平台。</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>校验预览</h3>
+                <p id="legacyImportSummary">尚未导入文件。</p>
+              </div>
+              <button class="primary" data-action="confirmImport" disabled>确认入库</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>行号</th><th>手机号</th><th>学生</th><th>年级班级</th><th>学习账号</th><th>校验结果</th><th>处理建议</th></tr>
+                </thead>
+                <tbody id="legacyImportRows">
+                  <tr><td colspan="7" class="muted">点击“模拟导入并校验”查看预览。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-binding" hidden>
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>学生绑定</h3>
+                <p>将小程序授权手机号与我们平台学生档案建立关系。</p>
+              </div>
+              <button class="primary" data-action="bindStudent">手动绑定</button>
+            </div>
+            <div class="panel-body">
+              <div class="toolbar">
+                <input id="legacyBindingSearch" value="176****0909" placeholder="手机号 / 学生姓名 / 学习账号">
+                <select><option>全部状态</option><option>已绑定</option><option>冲突</option><option>待绑定</option></select>
+                <button class="secondary" data-action="searchBinding">查询</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>手机号</th><th>学生</th><th>学校/班级</th><th>学习账号</th><th>绑定状态</th><th>最近操作</th><th>操作</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>176****0909</td><td>慧小聚</td><td>高三10班</td><td>12345678</td><td><span class="status ok">已绑定</span></td><td>运营A 10:32</td><td><button class="icon-btn" data-action="viewDetail">详情</button></td></tr>
+                    <tr><td>138****1622</td><td>王同学 / 王小同</td><td>高二8班</td><td>冲突</td><td><span class="status warn">待确认</span></td><td>系统导入 09:41</td><td><button class="icon-btn" data-action="resolveConflict">处理冲突</button></td></tr>
+                    <tr><td>159****7731</td><td>未匹配</td><td>-</td><td>-</td><td><span class="status fail">待绑定</span></td><td>小程序授权 09:20</td><td><button class="icon-btn" data-action="bindStudent">绑定</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-course" hidden>
+          <div class="layout-2">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>第三方课程源配置</h3>
+                  <p>小程序不直接对接第三方，后台配置后由我们平台提供课程接口。</p>
+                </div>
+                <button class="primary" data-action="saveCourseConfig">保存配置</button>
+              </div>
+              <div class="panel-body form-grid">
+                <div class="form-row"><label>服务商</label><input class="field" value="小鹅通"></div>
+                <div class="form-row"><label>服务状态</label><select class="field"><option>启用</option><option>停用</option></select></div>
+                <div class="form-row"><label>API 地址</label><input class="field" value="https://api.provider.example/course"></div>
+                <div class="form-row"><label>同步频率</label><select class="field"><option>每 5 分钟</option><option>每 15 分钟</option><option>手动同步</option></select></div>
+                <div class="form-row"><label>业务域名</label><input class="field" value="course.provider.example"></div>
+                <div class="form-row"><label>鉴权方式</label><input class="field" value="Token，后台加密保存"></div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>学生端接口</h3>
+                  <p>学生端只读我们平台。</p>
+                </div>
+              </div>
+              <div class="panel-body api-flow">
+                <div class="flow-row"><span>/api/student/courses</span><small>课程列表</small><span class="status ok">已发布</span></div>
+                <div class="flow-row"><span>/api/student/reserve</span><small>课程预约</small><span class="status ok">已发布</span></div>
+                <div class="flow-row"><span>/api/student/watch-sync</span><small>观看同步结果</small><span class="status sync">同步中</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>课程映射与展示</h3>
+                <p>第三方课程 ID 映射到我们平台课程，并配置学生端展示位置。</p>
+              </div>
+              <button class="secondary" data-action="publishCourse">发布到学生端</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>我们课程 ID</th><th>第三方课程 ID</th><th>课程名称</th><th>展示位置</th><th>按钮</th><th>同步状态</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>C1001</td><td>XET-88901</td><td>十一黄金周学习能力跃迁课</td><td>首页 / 公益课 / 弹窗</td><td>立即预约</td><td><span class="status ok">正常</span></td><td><button class="icon-btn" data-action="editCourse">编辑</button></td></tr>
+                  <tr><td>C1002</td><td>XET-88922</td><td>高三冲刺规划公开课</td><td>直播中 / 首页</td><td>去观看</td><td><span class="status sync">同步中</span></td><td><button class="icon-btn" data-action="editCourse">编辑</button></td></tr>
+                  <tr><td>C1003</td><td>未配置</td><td>名校试卷讲评体验课</td><td>回放 / 公益课</td><td>立即预约</td><td><span class="status warn">缺少映射</span></td><td><button class="icon-btn" data-action="editCourse">补充映射</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-homework" hidden>
+          <div class="layout-2">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>第三方作业服务配置</h3>
+                  <p>第三方只提供功能，提交和结果都经过我们平台。</p>
+                </div>
+                <button class="primary" data-action="saveHomeworkConfig">保存配置</button>
+              </div>
+              <div class="panel-body form-grid">
+                <div class="form-row"><label>服务商</label><input class="field" value="第三方作业批改服务"></div>
+                <div class="form-row"><label>服务状态</label><select class="field"><option>启用</option><option>停用</option></select></div>
+                <div class="form-row"><label>提交 API</label><input class="field" value="/external/homework/submit"></div>
+                <div class="form-row"><label>回调地址</label><input class="field" value="/api/provider/homework/callback"></div>
+                <div class="form-row"><label>超时时间</label><select class="field"><option>30 秒</option><option>60 秒</option></select></div>
+                <div class="form-row"><label>失败策略</label><select class="field"><option>自动重试 3 次</option><option>仅人工处理</option></select></div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>作业调用链</h3>
+                  <p>学生端到学情报告的数据路径。</p>
+                </div>
+              </div>
+              <div class="panel-body api-flow">
+                <div class="flow-row"><span>学生提交</span><small>图片和备注先落我们平台</small><span class="status ok">P0</span></div>
+                <div class="flow-row"><span>能力转发</span><small>我们后端调用第三方批改</small><span class="status ok">P0</span></div>
+                <div class="flow-row"><span>结果回流</span><small>第三方回调，批改结果落库</small><span class="status warn">需监控</span></div>
+                <div class="flow-row"><span>报告生成</span><small>我们平台生成学情档案</small><span class="status ok">P0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>作业任务与批改状态</h3>
+                <p>支撑学生端“待完成 / 已提交 / 已批改 / 全部”。</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>作业 ID</th><th>第三方 ID</th><th>作业名称</th><th>科目</th><th>提交数</th><th>批改状态</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>H2001</td><td>HW-7781</td><td>高中英语高频考点练习</td><td>英语</td><td>328</td><td><span class="status warn">批改中 42</span></td><td><button class="icon-btn" data-action="viewHomeworkLog">日志</button></td></tr>
+                  <tr><td>H2002</td><td>HW-7782</td><td>作文素材整理与仿写</td><td>语文</td><td>286</td><td><span class="status ok">已完成</span></td><td><button class="icon-btn" data-action="viewHomeworkLog">报告</button></td></tr>
+                  <tr><td>H2003</td><td>缺失</td><td>函数专题巩固训练</td><td>数学</td><td>191</td><td><span class="status fail">接口失败</span></td><td><button class="icon-btn" data-action="retryOne">重试</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-data" hidden>
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>数据落库状态</h3>
+                <p>所有数据以我们平台数据库为准，第三方不作为主数据源。</p>
+              </div>
+              <button class="secondary" data-action="exportData">导出核对</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>数据域</th><th>今日新增</th><th>总量</th><th>来源</th><th>落库状态</th><th>最近更新时间</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>账号与学生</td><td>328</td><td>12,486</td><td>后台导入</td><td><span class="status ok">正常</span></td><td>10:32</td></tr>
+                  <tr><td>课程与预约</td><td>214</td><td>3,892</td><td>后台配置 / 学生端</td><td><span class="status ok">正常</span></td><td>10:28</td></tr>
+                  <tr><td>课程观看</td><td>1,026</td><td>26,410</td><td>第三方课程同步</td><td><span class="status sync">同步中</span></td><td>10:25</td></tr>
+                  <tr><td>作业提交</td><td>1,268</td><td>18,905</td><td>学生端提交</td><td><span class="status ok">正常</span></td><td>10:22</td></tr>
+                  <tr><td>批改报告</td><td>1,084</td><td>15,770</td><td>第三方作业回调</td><td><span class="status warn">延迟 3 条</span></td><td>10:20</td></tr>
+                  <tr><td>学情档案</td><td>1,070</td><td>14,982</td><td>我们平台生成</td><td><span class="status ok">正常</span></td><td>10:18</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-logs">
+          <div class="panel-card">
+            <div class="panel-head">
+              <div>
+                <h3>同步日志</h3>
+                <p>排查第三方课程、作业接口和数据入库异常。</p>
+              </div>
+              <button class="danger" data-action="retryFailed">重试失败项</button>
+            </div>
+            <div class="panel-body">
+              <div class="toolbar">
+                <select><option>全部服务</option><option>账号服务</option><option>内容服务</option><option>数据服务</option></select>
+                <select><option>全部状态</option><option>成功</option><option>失败</option><option>同步中</option></select>
+                <input value="REQ-20260610" placeholder="request_id / 用户 / 内容资源">
+                <button class="secondary" data-action="filterLogs">筛选</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>时间</th><th>服务</th><th>业务对象</th><th>request_id</th><th>状态</th><th>错误原因</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>10:31:22</td><td>内容同步</td><td>R-C1001 / 小鹅通课程</td><td>REQ-20260610-8841</td><td><span class="status fail">失败</span></td><td>第三方超时</td><td><button class="icon-btn" data-action="retryOne">重试</button></td></tr>
+                  <tr><td>10:29:18</td><td>用户查询</td><td>慧小聚 / 学情档案</td><td>REQ-20260610-8830</td><td><span class="status ok">成功</span></td><td>-</td><td><button class="icon-btn" data-action="viewDetail">详情</button></td></tr>
+                  <tr><td>10:27:05</td><td>数据落库</td><td>观看时长 / 1,026 条</td><td>REQ-20260610-8819</td><td><span class="status sync">同步中</span></td><td>等待写入</td><td><button class="icon-btn" data-action="viewDetail">详情</button></td></tr>
+                  <tr><td>10:21:49</td><td>内容配置</td><td>R-F2001</td><td>REQ-20260610-8790</td><td><span class="status warn">缺配置</span></td><td>文件未设置展示位置</td><td><button class="icon-btn jump-link" data-view="content">去配置</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="confirm-backdrop" id="confirmDialog" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="confirmTitle">
+    <div class="confirm-card">
+      <h3 id="confirmTitle">确认操作</h3>
+      <p id="confirmText">请确认后继续。</p>
+      <div class="confirm-actions">
+        <button class="secondary" data-confirm-cancel>取消</button>
+        <button class="primary" data-confirm-ok>确认</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const titleMap = {
+      account: ["账号管理", "整合账号导入、用户检索和学生绑定处理。"],
+      content: ["内容配置", "先选择用户端和模块，再进入二级资源列表完成增删改查、配置和上下架。"],
+      "data-center": ["数据中心", "查看数据看板、落库状态，并查询导出用户数据和学情档案。"],
+      logs: ["同步日志", "查看第三方接口请求、回调、失败和重试。"]
+    };
+
+    const contentModules = {
+      homePublic: {
+        title: "首页公益课程",
+        desc: "管理学生端首页公益课程下的资源列表，新增、配置和上下架都在此模块内完成。"
+      },
+      learningCenter: {
+        title: "学习中心",
+        desc: "管理学习中心的课程、文件和课程资料关联，支持长期学习资源维护。"
+      },
+      liveCourse: {
+        title: "直播课程",
+        desc: "管理直播课程资源，包含直播预约、回看课程和相关资料配置。"
+      },
+      promoModal: {
+        title: "公益课推荐弹窗",
+        desc: "管理学生端运营弹窗中的推荐课程或资料，控制展示、按钮和上下架状态。"
+      }
+    };
+
+    const state = {
+      currentView: "account",
+      activeContentModule: "homePublic",
+      importValidated: false,
+      pendingConfirm: null
+    };
+
+    function setView(view) {
+      if (!titleMap[view] || !document.getElementById(`view-${view}`)) return;
+      state.currentView = view;
+      document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
+      document.getElementById(`view-${view}`).classList.add("active");
+      document.querySelectorAll(".nav-btn").forEach((btn) => {
+        const active = btn.dataset.view === view;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-current", active ? "page" : "false");
+      });
+      document.getElementById("viewTitle").textContent = titleMap[view][0];
+      document.getElementById("viewDesc").textContent = titleMap[view][1];
+      if (view === "content") showContentHome();
+    }
+
+    function showContentHome() {
+      const home = document.getElementById("contentHome");
+      const detail = document.getElementById("contentDetail");
+      if (!home || !detail) return;
+      home.hidden = false;
+      detail.hidden = true;
+    }
+
+    function openContentModule(moduleKey) {
+      const module = contentModules[moduleKey] || contentModules.homePublic;
+      const home = document.getElementById("contentHome");
+      const detail = document.getElementById("contentDetail");
+      if (!home || !detail) return;
+      state.activeContentModule = moduleKey;
+      document.getElementById("contentModuleTitle").textContent = `${module.title}资源`;
+      document.getElementById("contentModuleDesc").textContent = module.desc;
+      home.hidden = true;
+      detail.hidden = false;
+      toast(`已进入${module.title}资源列表`);
+    }
+
+    function toast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+    }
+
+    function setButtonBusy(button, busyText, doneText) {
+      if (!button) return;
+      const original = button.textContent.trim();
+      button.disabled = true;
+      button.textContent = busyText;
+      setTimeout(() => {
+        button.disabled = false;
+        button.textContent = original;
+        if (doneText) toast(doneText);
+      }, 700);
+    }
+
+    function openConfirm(title, text, okText, onConfirm) {
+      const dialog = document.getElementById("confirmDialog");
+      document.getElementById("confirmTitle").textContent = title;
+      document.getElementById("confirmText").textContent = text;
+      dialog.querySelector("[data-confirm-ok]").textContent = okText;
+      state.pendingConfirm = onConfirm;
+      dialog.classList.add("active");
+      dialog.setAttribute("aria-hidden", "false");
+      dialog.querySelector("[data-confirm-cancel]").focus();
+    }
+
+    function closeConfirm() {
+      const dialog = document.getElementById("confirmDialog");
+      dialog.classList.remove("active");
+      dialog.setAttribute("aria-hidden", "true");
+      state.pendingConfirm = null;
+    }
+
+    document.addEventListener("click", (event) => {
+      const cancelButton = event.target.closest("[data-confirm-cancel]");
+      if (cancelButton) {
+        closeConfirm();
+        return;
+      }
+
+      const okButton = event.target.closest("[data-confirm-ok]");
+      if (okButton) {
+        const confirmed = state.pendingConfirm;
+        closeConfirm();
+        if (confirmed) confirmed();
+        return;
+      }
+
+      if (event.target === document.getElementById("confirmDialog")) {
+        closeConfirm();
+        return;
+      }
+
+      const viewButton = event.target.closest(".nav-btn[data-view], .jump-link[data-view]");
+      if (viewButton) {
+        setView(viewButton.dataset.view);
+        if (viewButton.classList.contains("jump-link")) toast("已跳转到内容配置");
+        return;
+      }
+
+      const actionButton = event.target.closest("[data-action]");
+      if (!actionButton) return;
+
+      const action = actionButton.dataset.action;
+
+      if (action === "validateImport") {
+        document.getElementById("importSummary").textContent = "校验完成：新增 328 条，更新 42 条，冲突 3 条，错误 2 条。";
+        document.getElementById("importRows").innerHTML = `
+          <tr><td>176****0909</td><td>微信用户CHS123 / 慧小聚</td><td>小聚妈妈</td><td>慧聚领航学校 / 高三10班</td><td>12345678</td><td><span class="status ok">可导入</span></td><td>新增绑定关系</td><td><button class="icon-btn" data-action="viewDetail">详情</button></td></tr>
+          <tr><td>138****1622</td><td>王同学 / 王小同</td><td>王同学家长</td><td>高二8班</td><td>重复</td><td><span class="status warn">冲突</span></td><td>需确认学生归属</td><td><button class="icon-btn" data-action="resolveConflict">处理</button></td></tr>
+          <tr><td>159****7731</td><td>未匹配</td><td>学习中</td><td>高一3班</td><td>778899</td><td><span class="status fail">错误</span></td><td>学生姓名不能为空</td><td><button class="icon-btn" data-action="bindStudent">绑定</button></td></tr>
+          <tr><td>格式错误</td><td>李同学</td><td>-</td><td>高三2班</td><td>445566</td><td><span class="status fail">错误</span></td><td>修正手机号后重传</td><td><button class="icon-btn" data-action="viewDetail">详情</button></td></tr>
+        `;
+        state.importValidated = true;
+        document.querySelector("[data-action='confirmImport']").disabled = false;
+        toast("账号文件校验完成，请处理冲突后确认入库");
+      }
+
+      if (action === "confirmImport") {
+        if (!state.importValidated) {
+          toast("请先完成导入校验");
+          return;
+        }
+        openConfirm(
+          "确认账号入库",
+          "将把校验通过的账号和绑定关系写入我们平台，冲突和错误记录会保留在待处理列表。",
+          "确认入库",
+          () => {
+            document.getElementById("importSummary").textContent = "已入库：新增 328 条，更新 42 条。冲突 3 条、错误 2 条已进入待处理。";
+            toast("账号和绑定关系已写入我们平台");
+          }
+        );
+      }
+      if (action === "downloadTemplate") toast("已生成账号导入模板");
+      if (action === "searchBinding") toast("已按当前条件查询绑定关系");
+      if (action === "bindStudent") toast("已打开手动绑定流程");
+      if (action === "resolveConflict") toast("已进入绑定冲突处理");
+      if (action === "saveCourseConfig") setButtonBusy(actionButton, "保存中...", "课程源配置已保存，小程序仍只读取我们平台接口");
+      if (action === "publishCourse") toast("课程展示配置已发布到学生端");
+      if (action === "editCourse") toast("已打开课程映射编辑");
+      if (action === "openContentModule") openContentModule(actionButton.dataset.module);
+      if (action === "backToContentHome") {
+        showContentHome();
+        toast("已返回内容配置一级模块");
+      }
+      if (action === "createModuleResource") {
+        const module = contentModules[state.activeContentModule] || contentModules.homePublic;
+        toast(`已打开${module.title}的新增内容表单`);
+      }
+      if (action === "queryContentResource") toast("已按当前模块条件查询资源内容");
+      if (action === "syncThirdCourse") setButtonBusy(actionButton, "同步中...", "已同步第三方课程信息");
+      if (action === "publishContent") toast("内容已发布上架到小程序");
+      if (action === "unpublishContent") {
+        openConfirm(
+          "确认下架内容",
+          "下架后学生端不再展示该内容，历史学习数据和配置记录会保留。",
+          "确认下架",
+          () => toast("内容已下架，历史数据保留")
+        );
+      }
+      if (action === "uploadCourseResource") toast("已打开课程资源上传，支持自有视频课程");
+      if (action === "fetchXetCourse") toast("正在通过接口获取小鹅通课程信息");
+      if (action === "uploadOptionalFile") toast("已打开文件上传，支持 PDF / WORD / PPT");
+      if (action === "skipFileResource") toast("已跳过文件上传，课程可独立发布");
+      if (action === "editContent") toast("已打开当前模块资源编辑");
+      if (action === "deleteContent") {
+        openConfirm(
+          "确认删除资源",
+          "删除后该资源将从当前模块列表移除；已产生的数据不会删除。",
+          "确认删除",
+          () => toast("资源已从当前模块移除")
+        );
+      }
+      if (action === "saveHomeworkConfig") setButtonBusy(actionButton, "保存中...", "作业服务配置已保存，第三方密钥已加密");
+      if (action === "viewHomeworkLog") toast("已打开作业接口日志");
+      if (action === "retryOne") toast("已发起单条重试，请在同步日志查看结果");
+      if (action === "retryFailed") {
+        openConfirm(
+          "确认批量重试",
+          "将对当前筛选范围内的失败请求发起批量重试，重试结果会写入同步日志。",
+          "开始重试",
+          () => toast("已发起失败项批量重试")
+        );
+      }
+      if (action === "exportData") toast("已生成数据核对导出任务");
+      if (action === "exportDashboard") toast("已生成数据看板导出任务");
+      if (action === "queryUserData") toast("已按当前条件查询用户数据");
+      if (action === "exportUserData") toast("已生成用户数据导出任务");
+      if (action === "exportLearningProfile") toast("已生成学情档案导出任务");
+      if (action === "viewLearningProfile") toast("已打开单用户学情档案");
+      if (action === "filterLogs") toast("已按条件筛选同步日志");
+      if (action === "viewDetail") toast("已打开详情");
+      if (action === "refresh") toast("数据已刷新");
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeConfirm();
+    });
+
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+      btn.setAttribute("aria-current", btn.classList.contains("active") ? "page" : "false");
+    });
+  </script>
+</body>
+</html>

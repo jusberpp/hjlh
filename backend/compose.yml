@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: e_study
+      MYSQL_USER: e_study
+      MYSQL_PASSWORD: e-study-local
+      MYSQL_ROOT_PASSWORD: root-local
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot-local"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/e_study?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+      DB_USERNAME: e_study
+      DB_PASSWORD: e-study-local
+      REDIS_HOST: redis
+      JWT_SECRET: local-compose-jwt-secret-change-before-production
+      PHONE_HASH_SECRET: local-compose-phone-secret-change-before-production
+      FILE_STORAGE_ROOT: /app/data/files
+      FILE_TEMP_ROOT: /app/data/temp
+      XIAOE_MODE: stub
+    ports:
+      - "8081:8081"
+    volumes:
+      - file-data:/app/data
+
+volumes:
+  mysql-data:
+  redis-data:
+  file-data:

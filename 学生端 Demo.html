@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)http://192.168.1.221:5175/demo/student.html -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生端 Demo</title>
+  <link rel="stylesheet" href="./学生端 Demo_files/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <aside class="panel">
+      <div>
+        <h1>学生端 Demo</h1>
+        <p>学生端单独成页，便于讨论登录绑定、首页、课程、作业和我的页面，不再和教师端混在一个页面里。</p>
+      </div>
+
+      <section class="control-card">
+        <p class="control-title">演示端</p>
+        <div class="mode-switch">
+          <a class="active" href="http://192.168.1.221:5175/demo/student.html">学生端</a>
+          <a href="http://192.168.1.221:5175/demo/teacher.html">教师端</a>
+        </div>
+      </section>
+
+      <section class="control-card">
+        <p class="control-title">访问状态</p>
+        <div class="segmented" id="roleControl">
+          <button class="active" data-role="bound">已绑定学生</button>
+          <button data-role="unbound" class="">已登录未绑定</button>
+          <button data-role="guest" class="">游客</button>
+        </div>
+      </section>
+
+      <section class="control-card">
+        <p class="control-title">快速查看</p>
+        <div class="quick">
+          <button class="" data-page="home">首页</button>
+          <button data-page="course" class="active">课程</button>
+          <button data-page="homework" class="">作业</button>
+          <button data-page="profile" class="">我的</button>
+        </div>
+        <div class="legend">
+          <span><a href="http://192.168.1.221:5175/demo/index.html">返回入口 ›</a></span>
+        </div>
+      </section>
+
+      <section class="control-card">
+        <p class="control-title">运营弹窗</p>
+        <button class="ghost-btn" data-action="openPromoAd">触发公益课弹窗</button>
+        <div class="legend">
+          <span>真实触发时机后续再定，这里先看弹窗效果。</span>
+        </div>
+      </section>
+    </aside>
+
+    <section class="phone-wrap" aria-label="学生端手机预览">
+      <div class="phone">
+        <div class="app">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons">
+              <div class="signal"><span></span><span></span><span></span><span></span></div>
+              <div class="wifi"></div>
+              <div class="battery"></div>
+            </div>
+          </div>
+          <div class="mini-title" id="miniTitle">课程</div>
+          <div class="wechat-menu">•••</div>
+
+          <section class="page" id="page-home">
+            <div id="homeBound">
+              <div class="identity">
+                <div class="avatar" aria-hidden="true">
+                  <svg viewBox="0 0 64 64">
+                    <path d="M18 31c0-9 6-16 14-16s14 7 14 16-6 17-14 17-14-8-14-17Z" fill="#fff"></path>
+                    <path d="M21 18 17 9l10 5M43 18l4-9-10 5" fill="#ff9d35"></path>
+                    <path d="M24 34c4 5 12 5 16 0" stroke="#1b63ff" stroke-width="4" fill="none" stroke-linecap="round"></path>
+                    <circle cx="25" cy="27" r="3" fill="#233"></circle>
+                    <circle cx="39" cy="27" r="3" fill="#233"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <h2>慧小聚 <span class="grade">高三10班</span></h2>
+                  <p>学习账号：12345678</p>
+                </div>
+              </div>
+
+              <div class="notice">
+                <span>今日有 <strong>2项作业</strong> 待完成</span>
+                <button class="tiny-btn" data-go="homework">立即查看</button>
+              </div>
+
+              <div class="quick-grid student">
+                <button class="quick-card blue" data-go="submit">
+                  <svg viewBox="0 0 48 48"><path d="M15 7h14l9 9v25H15z" fill="rgba(255,255,255,.35)"></path><path d="M29 7v10h9M20 26h14M20 33h10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"></path></svg>
+                  <b>提交作业</b>
+                </button>
+                <button class="quick-card orange" data-go="report">
+                  <svg viewBox="0 0 48 48"><path d="M9 38h30" stroke="#fff" stroke-width="4" stroke-linecap="round"></path><path d="M15 32V18M24 32V10M33 32V23" stroke="#fff" stroke-width="5" stroke-linecap="round"></path></svg>
+                  <b>学情档案</b>
+                </button>
+              </div>
+
+              <div class="section-head">
+                <h3>作业任务</h3>
+                <button data-go="homework">全部作业 ›</button>
+              </div>
+              <div class="card-list">
+                <article class="homework-card">
+                  <div class="subject-art english">英语</div>
+                  <div>
+                    <h4>高中英语高频考点练习</h4>
+                    <p class="meta">布置时间：2026.05.18 12:00<br>截止时间：2026.05.20 20:00</p>
+                    <div class="card-foot"><span class="status warn">待提交</span><b style="color:#ff8a1f;">6/20</b></div>
+                  </div>
+                </article>
+                <article class="homework-card">
+                  <div class="subject-art math">数学</div>
+                  <div>
+                    <h4>函数专题巩固训练</h4>
+                    <p class="meta">布置时间：2026.05.17 18:00<br>截止时间：2026.05.20 18:00</p>
+                    <div class="card-foot"><span class="status">批改中</span><b style="color:#1677ff;">已交</b></div>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div id="homeUnbound" hidden="">
+              <div class="identity">
+                <div class="avatar" aria-hidden="true"></div>
+                <div>
+                  <h2>微信用户CHS123</h2>
+                  <p>手机号：176****0909</p>
+                </div>
+              </div>
+              <div class="bind-hero">
+                <h2>关联学生信息</h2>
+                <p>完善孩子的真实信息后，可查看班级作业、提交作业并生成学习报告。</p>
+                <button class="primary" data-go="bind">立即绑定</button>
+              </div>
+            </div>
+
+            <div id="homeGuest" hidden="">
+              <div class="empty-hero">
+                <div>
+                  <svg viewBox="0 0 96 96">
+                    <path d="M22 64c8-22 25-37 51-45-5 28-21 47-45 57l-6-12Z" fill="#d8f0ff"></path>
+                    <path d="M31 62 20 76l15-7" fill="#1677ff"></path>
+                    <circle cx="61" cy="35" r="8" fill="#1677ff"></circle>
+                  </svg>
+                  <div>登录后可预约课程</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-head">
+              <h3>公益课程</h3>
+              <button data-go="course">更多课程 ›</button>
+            </div>
+            <div class="course-list-vertical">
+              <article class="course-card">
+                <div>
+                  <h4>十一黄金周学习能力跃迁课</h4>
+                  <p>2026年10月4日-7日</p>
+                </div>
+                <button data-action="reserve">立即预约</button>
+              </article>
+              <article class="course-card cyan">
+                <div>
+                  <h4>高三冲刺规划公开课</h4>
+                  <p>今晚 19:30 开课</p>
+                </div>
+                <button data-action="watch">去观看</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="page active" id="page-course">
+            <div class="tabs">
+              <button class="tab-chip active">公益课</button>
+              <button class="tab-chip">我的课</button>
+              <button class="tab-chip">直播中</button>
+              <button class="tab-chip">回放</button>
+            </div>
+            <div class="card-list">
+              <article class="course-card">
+                <div>
+                  <h4>十一黄金周学习能力跃迁课</h4>
+                  <p>适合高一至高三学生</p>
+                </div>
+                <button data-action="reserve">立即预约</button>
+              </article>
+              <article class="course-card cyan">
+                <div>
+                  <h4>高三冲刺规划公开课</h4>
+                  <p>今晚 19:30 开课</p>
+                </div>
+                <button data-action="watch">去观看</button>
+              </article>
+              <article class="course-card red">
+                <div>
+                  <h4>名校试卷讲评体验课</h4>
+                  <p>预约后服务号提醒</p>
+                </div>
+                <button data-action="reserve">立即预约</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" id="page-homework">
+            <div class="tabs">
+              <button class="tab-chip active">待完成</button>
+              <button class="tab-chip">已提交</button>
+              <button class="tab-chip">已批改</button>
+              <button class="tab-chip">全部</button>
+            </div>
+
+            <div id="homeworkLocked" hidden="">
+              <div class="bind-hero">
+                <h2>绑定后查看作业</h2>
+                <p>作业任务按学校、年级和班级下发，需要先完成学生信息绑定。</p>
+                <button class="primary" data-go="bind">去绑定</button>
+              </div>
+            </div>
+
+            <div id="homeworkList">
+              <div class="card-list">
+                <article class="homework-card">
+                  <div class="subject-art english">英语</div>
+                  <div>
+                    <h4>高中英语高频考点练习</h4>
+                    <p class="meta">张老师｜截止 2026.05.20 20:00</p>
+                    <div class="card-foot"><span class="status warn">待提交</span><button class="tiny-btn" data-go="submit">提交</button></div>
+                  </div>
+                </article>
+                <article class="homework-card">
+                  <div class="subject-art chinese">语文</div>
+                  <div>
+                    <h4>作文素材整理与仿写</h4>
+                    <p class="meta">李老师｜截止 2026.05.21 18:00</p>
+                    <div class="card-foot"><span class="status done">已批改</span><button class="tiny-btn" data-go="report">报告</button></div>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div id="submitView" class="form-card" hidden="">
+              <h2 style="margin:0 0 10px;font-size:20px;">提交作业</h2>
+              <p class="meta">高中英语高频考点练习</p>
+              <div class="upload-grid">
+                <div class="upload filled">第1页</div>
+                <div class="upload filled">第2页</div>
+                <button class="upload">添加</button>
+              </div>
+              <input class="field" value="老师，我第3题不太确定">
+              <button class="primary" data-action="submitHomework">确认提交</button>
+            </div>
+          </section>
+
+          <section class="page" id="page-profile">
+            <div class="profile-card">
+              <div class="identity" style="margin-bottom:0;">
+                <div class="avatar" aria-hidden="true"></div>
+                <div>
+                  <h2 id="profileName">慧小聚</h2>
+                  <p id="profileMeta">高三10班｜学习账号 12345678</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="profileBindCard" class="bind-hero" hidden="">
+              <h2>还未绑定学生</h2>
+              <p>绑定后可查看作业任务、批改报告和学情档案。</p>
+              <button class="primary" data-go="bind">立即绑定</button>
+            </div>
+
+            <div class="report-card" id="reportSummary">
+              <div class="section-head"><h3>学情档案</h3><button data-go="report">查看详情 ›</button></div>
+              <div class="metric-grid">
+                <div class="metric"><b>86%</b><span>作业正确率</span></div>
+                <div class="metric"><b>18次</b><span>提交次数</span></div>
+                <div class="metric"><b>12.6h</b><span>课程学习</span></div>
+              </div>
+              <div class="bar-row"><span>英语</span><div class="bar"><span style="width:78%;"></span></div><b>78%</b></div>
+              <div class="bar-row"><span>数学</span><div class="bar"><span style="width:88%;"></span></div><b>88%</b></div>
+              <div class="bar-row"><span>语文</span><div class="bar"><span style="width:92%;"></span></div><b>92%</b></div>
+            </div>
+
+            <div class="card-list">
+              <div class="profile-card" style="margin:0;">看课手机号 <b style="float:right;">176****0909</b></div>
+              <div class="profile-card" style="margin:0;">我的预约 <b style="float:right;color:#8d96a6;">2节</b></div>
+              <div class="profile-card" style="margin:0;">联系客服 <b style="float:right;color:#8d96a6;">›</b></div>
+            </div>
+          </section>
+
+          <section class="page" id="page-report">
+            <div class="report-card">
+              <div class="section-head">
+                <h3>学习概览</h3>
+                <button data-go="profile">返回我的 ›</button>
+              </div>
+              <div class="metric-grid">
+                <div class="metric"><b>86%</b><span>作业正确率</span></div>
+                <div class="metric"><b>18次</b><span>提交次数</span></div>
+                <div class="metric"><b>92%</b><span>按时提交率</span></div>
+              </div>
+              <div class="metric-grid">
+                <div class="metric"><b>6节</b><span>已看课程</span></div>
+                <div class="metric"><b>12.6h</b><span>课程学习</span></div>
+                <div class="metric"><b>今天</b><span>最近学习</span></div>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <div class="section-head"><h3>作业表现</h3><button>近30天</button></div>
+              <div class="bar-row"><span>英语</span><div class="bar"><span style="width:78%;"></span></div><b>78%</b></div>
+              <div class="bar-row"><span>数学</span><div class="bar"><span style="width:88%;"></span></div><b>88%</b></div>
+              <div class="bar-row"><span>语文</span><div class="bar"><span style="width:92%;"></span></div><b>92%</b></div>
+              <div class="notice" style="margin:14px 0 0;">
+                <span>还有 <strong>1项订正</strong> 建议优先完成</span>
+                <button class="tiny-btn" data-go="homework">去查看</button>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <div class="section-head"><h3>课程观看</h3><button>小鹅通同步</button></div>
+              <article class="homework-card">
+                <div class="subject-art physics">课程</div>
+                <div>
+                  <h4>高三冲刺规划公开课</h4>
+                  <p class="meta">最近学习：今天 19:20<br>学习进度：72%</p>
+                  <div class="card-foot"><span class="status">学习中</span><b style="color:#1677ff;">72%</b></div>
+                </div>
+              </article>
+              <p class="meta" style="margin-top:10px;">课程学习数据可能存在数分钟延迟，具体以小鹅通同步结果为准。</p>
+            </div>
+
+            <div class="report-card">
+              <div class="section-head"><h3>学习建议</h3><button>规则生成</button></div>
+              <div class="card-list" style="margin-bottom:0;">
+                <div class="profile-card" style="margin:0;">优先完成英语待提交作业 <b style="float:right;color:#ff8a1f;">待办</b></div>
+                <div class="profile-card" style="margin:0;">数学正确率稳定，可保持当前节奏 <b style="float:right;color:#23c16b;">良好</b></div>
+                <div class="profile-card" style="margin:0;">公开课进度未完成，建议继续观看 <b style="float:right;color:#1677ff;">继续</b></div>
+              </div>
+            </div>
+          </section>
+
+          <nav class="nav" style="--nav-count:4" aria-label="学生端底部导航">
+            <button class="" data-page="home">
+              <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"></path></svg>
+              首页
+            </button>
+            <button data-page="course" class="active">
+              <svg viewBox="0 0 24 24"><path d="M4 5h16v12H4zM8 21h8M12 17v4"></path></svg>
+              课程
+            </button>
+            <button data-page="homework" class="">
+              <svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6zM14 3v4h4M9 12h6M9 16h4"></path></svg>
+              作业
+            </button>
+            <button data-page="profile" class="">
+              <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0"></path></svg>
+              我的
+            </button>
+          </nav>
+
+          <div class="modal" id="promoModal" aria-modal="true">
+            <div class="modal-card">
+              <h3>公益课预约</h3>
+              <p>预约成功后，请关注服务号接收开课提醒。</p>
+              <div class="modal-actions">
+                <button class="secondary" data-close="">稍后再说</button>
+                <button class="primary" data-close="">立即预约</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal" id="promoAdModal" aria-modal="true">
+            <div class="modal-card">
+              <h3>公益课推荐</h3>
+              <p>十一黄金周学习能力跃迁课<br>2026年10月4日-7日</p>
+              <div class="course-card" style="min-height:112px;margin-bottom:16px;text-align:left;">
+                <div>
+                  <h4>学习能力跃迁公开课</h4>
+                  <p>预约后通过服务号提醒开课</p>
+                </div>
+                <button data-action="promoReserve">立即预约</button>
+              </div>
+              <div class="modal-actions">
+                <button class="secondary" data-action="promoWatch">去观看</button>
+                <button class="primary" data-action="promoReserve">立即预约</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="toast" id="toast">登录并绑定学生后可查看作业</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./学生端 Demo_files/student.js"></script>
+
+
+</body></html>

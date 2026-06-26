@@ -1,0 +1,66 @@
+server:
+  port: ${SERVER_PORT:8081}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/}
+
+spring:
+  application:
+    name: e-study-backend
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/e_study?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:change-me}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3s
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 520MB
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+study:
+  security:
+    jwt-secret: ${JWT_SECRET:replace-this-development-secret-with-at-least-32-bytes}
+    jwt-expiration: ${JWT_EXPIRATION:8h}
+  auth:
+    student-token-store: ${STUDENT_TOKEN_STORE:redis}
+    student-token-ttl: ${STUDENT_TOKEN_TTL:30m}
+  phone:
+    hash-secret: ${PHONE_HASH_SECRET:replace-this-phone-hash-secret}
+  storage:
+    root: ${FILE_STORAGE_ROOT:./data/files}
+    temp-root: ${FILE_TEMP_ROOT:./data/temp}
+    token-ttl: ${FILE_TOKEN_TTL:30m}
+  xiaoe:
+    mode: ${XIAOE_MODE:stub}
+    base-url: ${XIAOE_BASE_URL:}
+    app-id: ${XIAOE_APP_ID:}
+    app-secret: ${XIAOE_APP_SECRET:}
+    timeout: ${XIAOE_TIMEOUT:5s}
+
+logging:
+  level:
+    com.huijulh.study: INFO
+    org.springframework.security: WARN

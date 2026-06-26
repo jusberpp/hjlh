@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:estudy;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+study:
+  auth:
+    student-token-store: memory
+    student-token-ttl: 30m
+  security:
+    jwt-secret: test-secret-must-be-at-least-thirty-two-bytes-long
+    jwt-expiration: 8h
+  phone:
+    hash-secret: test-phone-secret
+  storage:
+    root: ${java.io.tmpdir}/e-study-test/files
+    temp-root: ${java.io.tmpdir}/e-study-test/temp
+    token-ttl: 30m
